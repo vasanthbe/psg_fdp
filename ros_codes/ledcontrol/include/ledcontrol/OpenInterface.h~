@@ -1,0 +1,36 @@
+
+#include <sereal/sereal.h>
+
+namespace irobot
+{
+	class OpenInterface
+	{
+		public:
+	
+		//! Constructor
+		/*!
+		 * By default the constructor will set the Roomba to read only the encoder counts (for odometry).
+		 *
+		 *  \param new_serial_port    Name of the serial port to open.
+		 *
+		 *  \sa setSensorPackets()
+		 */
+		OpenInterface(const char * new_serial_port);
+		//! Destructor
+		~OpenInterface();
+	
+		//! Open the serial port
+		/*!
+		 *  \param full_control    Whether to set the Roomba on OImode full or not.
+		 */
+		int openSerialPort(bool full_control);
+		//! Close the serial port
+		int closeSerialPort();
+		int setLedOn();
+		int setLedOff();
+	
+	};
+
+}
+
+// EOF

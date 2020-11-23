@@ -1,0 +1,45 @@
+#include <ros/ros.h>
+#include <sereal/sereal.h>
+
+#define REPLY_SIZE 1
+#define TIMEOUT 1000
+
+// This example opens the serial port and sends a request 'R' at 1Hz and waits for a reply.
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "sereal_node");
+    ros::NodeHandle n;
+
+    sereal::SerealPort device;
+    char reply[REPLY_SIZE];
+
+    // Change the next line according to your port name and baud rate
+    try{ device.open("/dev/ttyUSB0", 9600); }
+    catch(sereal::Exception& e)
+    {
+        ROS_FATAL("Failed to open the serial port!!!");
+        ROS_BREAK();
+    }
+    ROS_INFO("The serial port is opened.");
+
+    ros::Rate r(1);
+    while(ros::ok())
+    {
+        // Send 'R' over the serial port
+        device.write("R");
+
+        // Get the reply, the last value is the timeout in ms
+        try{ 
+	device.read(reply, REPLY_SIZE, TIMEOUT); 
+        ROS_INFO("Got this reply: %s", reply);
+	}
+        catch(sereal::TimeoutException& e)
+        {
+            ROS_ERROR("Timeout!");
+        }
+
+        ros::spinOnce();
+        r.sleep();
+    }   
+}
+

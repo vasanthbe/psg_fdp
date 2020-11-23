@@ -1,0 +1,53 @@
+#include "ros/ros.h"
+#include "ledcontrol/ledsrv.h"
+#include <ledcontrol/OpenInterface.h>
+#include <iostream>
+
+std::string port;
+irobot::OpenInterface * roomba;
+
+bool led_switch(ledcontrol::ledsrv::Request  &req, ledcontrol::ledsrv::Response &res)
+{
+
+  if(req.driveled == 1)
+  {
+	roomba->setLedOn();
+	ROS_INFO("\r\nLED On\r\n");	
+  }
+  else
+  {
+	roomba->setLedOff();
+	ROS_INFO("\r\nLED Off\r\n");	
+  }
+
+  res.drivestat = req.driveled;
+  ROS_INFO("\r\nrequest: x=%ld\r\n", (long int)res.drivestat);
+  return true;
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "led_server");
+  ros::NodeHandle n;
+
+  n.param<std::string>("roomba/port", port, "/dev/ttyUSB0");
+	
+  roomba = new irobot::OpenInterface(port.c_str());
+
+  if( roomba->openSerialPort(true) == 0) ROS_INFO("Connected to led board");
+  else
+  {
+	ROS_FATAL("Could not connect to Sachu.");
+	ROS_BREAK();
+  }
+
+// %Tag(SERVICE_SERVER)%
+  ros::ServiceServer service = n.advertiseService("led", led_switch);
+// %EndTag(SERVICE_SERVER)%
+
+  ros::spin();
+  
+  roomba->closeSerialPort();
+
+  return 0;
+}

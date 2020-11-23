@@ -1,0 +1,70 @@
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
+#include <string>
+#include <netinet/in.h>
+#include <sys/types.h>
+
+#include <ledcontrol/OpenInterface.h>
+
+// *****************************************************************************
+// Constructor
+irobot::OpenInterface::OpenInterface(const char * new_serial_port)
+{	
+	port_name_ = new_serial_port;
+
+	serial_port_ = new sereal::SerealPort();
+}
+
+
+// *****************************************************************************
+// Destructor
+irobot::OpenInterface::~OpenInterface()
+{
+	// Clean up!
+	delete serial_port_;
+}
+
+
+// *****************************************************************************
+// Open the serial port
+int irobot::OpenInterface::openSerialPort(bool full_control)
+{
+	try{ serial_port_->open(port_name_.c_str(), 9600); }
+	catch(sereal::Exception& e){ return(-1); }
+
+	return(0);
+}
+
+
+// *****************************************************************************
+
+// Close the serial port
+int irobot::OpenInterface::closeSerialPort()
+{
+	try{ serial_port_->close(); }
+	catch(sereal::Exception& e){ return(-1); }
+
+	return(0);
+}
+
+
+// *****************************************************************************
+// Send an OP code to the roomba
+int irobot::OpenInterface::setLedOn()
+{
+	char to_send = 'a';
+	try{ serial_port_->write(&to_send, 1); }
+	catch(sereal::Exception& e){ return(-1); }
+	return(0);
+}
+
+int irobot::OpenInterface::setLedOff()
+{
+	char to_send = 'b';
+	try{ serial_port_->write(&to_send, 1); }
+	catch(sereal::Exception& e){ return(-1); }
+	return(0);
+}
+
