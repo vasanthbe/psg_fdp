@@ -52,7 +52,7 @@ void loop() {
     {
       data = inputString.substring(stloc + 1,endloc);
       stloc = 0;
-      endloc = data.indexOf(',');
+      endloc = data.indexOf(':');
       command = data.substring(stloc,endloc);
     }
     // clear the string:

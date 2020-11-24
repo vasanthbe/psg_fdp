@@ -201,7 +201,7 @@ int irobot::OpenInterface::parseSensorPacket(std::string buffer, int index)
 			if ((not(etfound > 0))or(etfound > packets_size_))
 				etfound = buffer.length();
 			indx = 0;			
-			analog_data[indx] = (int)(buffer[stfound + 1] | buffer[stfound + 2]);
+			analog_data[indx] = (int)((buffer[stfound + 1]>>8) | buffer[stfound + 2]);
 			rindex = etfound + 1;
 			break;
 	}
